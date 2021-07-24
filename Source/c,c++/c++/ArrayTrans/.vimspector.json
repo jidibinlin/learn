@@ -1,0 +1,28 @@
+{
+  "configurations": {
+    "<name>: Launch": {
+      "adapter": "vscode-cpptools",
+      "configuration": {
+        "name": "clang build and debug active file",
+        "type": "cppdbg",
+        "request": "launch",
+        "program": "${fileDirname}/${fileBasenameNoextension}",
+        "args": [],
+        "cwd": "${fileDirname}",
+        "environment": [],
+        "externalConsole": true,
+        "MIMode": "lldb"
+      }
+    },
+    "<name>: Attach": {
+      "adapter": "vscode-cpptools",
+      "configuration": {
+        "name": "<name>: Attach",
+        "type": "cppdbg",
+        "request": "attach",
+        "program": "<path to binary>",
+        "MIMode": "lldb"
+      }
+    }
+  }
+}
