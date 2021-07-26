@@ -16,4 +16,8 @@ for i = 1, #s do
     end
     result = math.max(result,left-i+1)
 end
+
+
 print(result)
+
+
