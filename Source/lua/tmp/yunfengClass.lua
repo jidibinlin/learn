@@ -3,7 +3,7 @@ function class(super)
     local class_type={}
     class_type.ctor     = false
     class_type.super    = super
-    class_type.new      = 
+    class_type.new      =
         function(...)
             local obj={}
             do
