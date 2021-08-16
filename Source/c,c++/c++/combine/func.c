@@ -1,12 +1,13 @@
-#include"head.h"  
+#include"head.h"
+
 status MakeNode(Link *p,int e)//分配由p指向的值为e的节点，并返回ok;若分配失败返回error
-    {
-        *p=new LNode;
-        if(!p)
-            return ERROR;
-        (*p)->data=e;
-        return OK;
-    }
+{
+    *p=new LNode;
+    if(!p)
+        return ERROR;
+    (*p)->data=e;
+    return OK;
+}
 
 void FreeNode(Link p)//释放p所指节点
     {
@@ -54,7 +55,7 @@ status InsFirs(Link *h,Link *s,Linklist *L)//已知h指向线性链表的头节�
         return OK;
     }
 status DelFirst(Link *h,Link *q,Linklist *L)//已知h指向线性链表的头节点，删除链表中的第一个节点并以q返回
-    { 
+    {
         Link k=*h;
         (*q)->data=(*h)->Next->data;
         (*h)=(*h)->Next;

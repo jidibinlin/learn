@@ -2,13 +2,14 @@ list1={2,4,3}
 list2={5,6,4}
 
 
+
 function pow(x,y)
-    if y==0 then
-        return 1
-    end
-    y=y-1
-    result = x
-    for i = y, 1,-1 do
+   if y==0 then
+      return 1
+   end
+   y=y-1
+   result = x
+   for i = y, 1,-1 do
         result = result*x
     end
     return result

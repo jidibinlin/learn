@@ -16,7 +16,6 @@ function class(super)
         end
     })
 
-
     -- 如果元素在子类中找不到 则在父类中寻找并复制给vtbl然后返回
     if super then
         setmetatable(vtbl, {__index =
