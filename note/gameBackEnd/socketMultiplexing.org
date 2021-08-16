@@ -1,0 +1,104 @@
+* 阻塞式I/O和异步式I/O
++ 阻塞式I/O
+  - 举一个例子，你要去街上买糖果，但是你自己身上没有钱，你只能等妈妈回来给你钱你才能拿着妈妈给你的钱去买糖果。
+  但是呢，你今天又有作业需要写。于是不聪明的你，选择在妈妈回来给你钱，然后你拿着钱去买糖果，买完糖果开开心
+  心吃完糖果后再去写作业。由于一直在傻傻的等妈妈，你的作业做到很晚才写完，被妈妈教训了一顿，还错过了动画片。
+  - 阻塞式的I/O就像是不聪明的你，在没有数据到达(妈妈没回来给你钱)之前，只知道傻傻的等，而不是去做一些其他的事
+  情。
++ 异步式I/O
+  - 还是上面的例子，这次你学聪明了，你知道在妈妈回来之前，先写完作业。于是你因为很早完成作业，被妈妈表扬，也
+  顺利的看到了动画片。
+  - 异步式I/O就是当你在等一些数据的时候，你可以先去做别的事情，等数据到达之后，你再回来做你该做的事情。
+
+* 阻塞式的程序    
++ 阻塞式客户端
+  #+begin_src csharp
+    using UnityEngine;
+    using System.Net.Sockets; // socket编程的名称空间
+    using UnityEngine.UI;
+
+    public class Echo:MonoBehaviour {
+        // 定义socket
+        Socket socket;
+        // UGUI unity的输入框
+        public InputField InputField;
+        public Text text;
+
+        // 点击连接按钮的函数
+        public void Connection(){
+            //Socket
+            socket = new Socket(AddressFamily.InterNetwork,SocketType.Stream,ProtocolType.Tcp);
+            //Connect
+            socket.Conn ct("127.0.0.1",8888); // 这里可能会阻塞
+        }
+
+        public void Send(){
+            //Send
+            string sendStr = InputField.text;
+            byte[] sendBytes = System.Text.Encoding.Default.GetBytes(sendStr);
+            socket.Send(sendBytes); // 发送过程中，程序必须暂停等待，等发完以后才能执行下面的程序
+            //Recv
+            byte[] readBuff = new byte[1024];
+            int count = socket.Receive(readBuff); // 接受的过程中，程序也必须暂停等待，十分消耗时间
+            string recvStr = System.Text.Encoding.Default.GetString(readBuff,0,count);
+            text.text = recvStr;
+            //Close
+            socket.Close();
+        }
+    }
+  #+end_src
+  - 上面的程序中我们看见，程序在接收，发送的过程中，都必须进入等待的状态
+  - 其实不止是接受和发送，在连接的时候，如果网速很慢，程序也会卡住，进入阻塞  
++ 阻塞式服务端程序
+  #+begin_src csharp
+    using System;
+    using System.Net;
+    using System.Net.Sockets;
+
+    namespace EchoServer
+    {
+        class MainClass{
+            public static void Main(string[] args){
+                Console.WriteLine("Hello World!");
+                //Socket
+                Socket listenfd = new Socket(AddressFamily.InterNetwork,SocketType.Stream,ProtocolType.Tcp);
+
+                //Bind
+                IPAddress ipAdr = IPAddress.Parse("127.0.0.1"); // 指定ip地址
+                IPEndPoint ipEp = new IPEndPoint(ipAdr,8888); // 指定ip和端口
+                listenfd.Bind(ipEp); //这里绑定
+
+                //Listen
+                listenfd.Listen(0);//listenfd.Listen(backlog)开启监听。
+                                    //参数backlog指定队列中最多可容纳等待接受的连接数，0表示不限制
+                Console.WriteLine("[服务器]启动成功");
+                while(true){
+                    //Accept
+                    Socket connfd = listenfd.Accept();  // 接收客户端连接 ,客户端没有连接时，服务程序会卡在这里
+                    Console.WriteLine("[服务器]Accept");
+                    //Receive
+                    byte[] readBuff = new byte[1024];
+                    int count = countfd.Receive(readBuff);
+                    string readStr = System.Text.Encoding.Default.GetString(readBuff,0,count);
+                    Console.WriteLine("[服务器接收]"+readStr);
+
+                    byte[] sendBytes = System.Text.Encoding.Default.GetBytes(readStr);
+                    connfd.Send(sendBytes)
+                }
+            }
+        }
+    }
+  #+end_src
+  - 上述服务端程序在Accept,Receive,Send阶段都会发生阻塞,导致程序卡住,此时的服务端程序只能接收一个连接，
+    一个服务器只能接受一个连接，这很显然是不合理的。
+
+* 异步和多路复用
+在上述的程序中，我们全部使用的是阻塞API(Connect,Send,Receive等),可称为同步Socket程序，它简单且容易实现。但是会时不时卡住。
+异步和多路复用是解决程序阻塞的方法。
+** 异步
++ 异步客户端
+  在同步客户端中使用API Connect 连接服务器，并使用API Send和Receive接收数据。在异步模式下、客户端可以使用BeginConnect和
+  EndConnect等异步API完成同样的功能。
+
+  
+
