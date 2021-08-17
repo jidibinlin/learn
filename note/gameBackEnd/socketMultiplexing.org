@@ -96,9 +96,78 @@
 在上述的程序中，我们全部使用的是阻塞API(Connect,Send,Receive等),可称为同步Socket程序，它简单且容易实现。但是会时不时卡住。
 异步和多路复用是解决程序阻塞的方法。
 ** 异步
-+ 异步客户端
-  在同步客户端中使用API Connect 连接服务器，并使用API Send和Receive接收数据。在异步模式下、客户端可以使用BeginConnect和
-  EndConnect等异步API完成同样的功能。
+*** 异步客户端
+在同步客户端中使用API Connect 连接服务器，并使用API Send和Receive接收数据。在异步模式下、客户端可以使用BeginConnect和
+EndConnect等异步API完成同样的功能。
+*** 异步Connect
+socket 的每一个同步API(比如Connect) 对应着两个异步API，分别在原名称前面加上Begin和End(比如BeginConnect和EndConnect)。
++ BeginConnect 函数
+  #+begin_src csharp
+    public IAsyncResult BeginConnect(string host,int port,AsyncCallback requestCallback,object state)
+  #+end_src
+  | 参数            | 说明                                                                   |
+  |-----------------+------------------------------------------------------------------------|
+  | host            | 远程主机的名称(ip)如"127.0.0.1"                                        |
+  |-----------------+------------------------------------------------------------------------|
+  | port            | 远程主机的端口号，如"8888"                                             |
+  |-----------------+------------------------------------------------------------------------|
+  | requestCallback | 一个AsyncCallback委托，也就是回调函数、回调函数的参数必须是这样的形式: |
+  |                 | void ConnectCallback(IAsyncResult ar)                                  |
+  |-----------------+------------------------------------------------------------------------|
+  | state           | 一个用户定义的对象，可包含连接操作相关信息。此对象会传递给回调函数     |
++ EndConnect 函数
+  #+begin_src csharp
+    public void EndConnect(IAsyncResult asyncResult)
+  #+end_src
+  在BeginConnect的回调函数中调用EndConnect,可完成连接
++ 异步客户端连接代码
+  #+begin_src csharp
+    using System;
 
+    // 点击连接按钮
+    public void Connection(){
+        //Socket
+        socket = new Socket(AddressFamily.InterNetwork, SocketType.Stream,ProtocolType.Tcp);
+        // begin connect
+        socket.BeginConnect("127.0.0.1",8888,ConnectCallback,socket);
+    }
+
+    //begin connect 回调
+    public void ConnectCallback(IAsyncResult ar){
+        try{
+            Socket socket = (socket) ar.AysncState;
+            socket.EndConnect(ar);
+            Debug.Log("Socket Connect succ")
+        }catch(SocketException ex){
+            Debug.Log("Socket connect fail" + ex.ToString());
+        }
+    }
+  #+end_src
+  1) 由BeginConnect 最后一个参数传入的socket，可以在回调函数中使用ar.AsyncState获取到
+*** 异步Receive
+异步Receive 可以解决在之前使用Receive这个阻塞方法时，会导致客户端卡住的问题。
++ BeginReceive 函数
+  BeginReceive 用户实现异步数据的接收
+  #+begin_src csharp
+    public IAsyncResult BeginReceive(
+        byte[] buffer,
+        int offset,
+        int size,
+        SocketFlags socketFlags,
+        AsyncCallback callback,
+        object state
+        );
+  #+end_src
+  | 参数        | 说明                                                                                       |
+  |-------------+--------------------------------------------------------------------------------------------|
+  | buffer      | Byte类型的数组，是接收数据的缓冲区                                                         |
+  |-------------+--------------------------------------------------------------------------------------------|
+  | size        | 最多接收的字节数                                                                           |
+  |-------------+--------------------------------------------------------------------------------------------|
+  | socketFlags | SocketFlags值的按位组合                                                                    |
+  |-------------+--------------------------------------------------------------------------------------------|
+  | callback    | 回调函数，一个AsyncCallback委托                                                            |
+  |-------------+--------------------------------------------------------------------------------------------|
+  | state       | 一个用户定义对象，其中包含接收操作的相关信息。当操作完成时，此对象会被传递给EndReceive委托 |
   
 
