@@ -1,3 +1,4 @@
+#+startup: latexpreview
 * Longest-Palindromic-Substring
 ** 题目描述
 Given a string s,return the longest palindromic substring in s。
@@ -45,19 +46,34 @@ https://leetcode-cn.com/problems/longest-palindromic-substring/
   2. "aa"
   任意的回文字符串，一定是在这两个结构的基础上，通过在他们两端加上相同的字符复合而成
 + 转移方程
-  | s就是回文字串                                    | s.length==1   |
-  |--------------------------------------------------+---------------|
-  | 如果s[0]==s[1]那么就是回文字串                   | s.length == 2 |
-  | 如果s[0]!=s[1]那么就不是回文字串                 |               |
-  |--------------------------------------------------+---------------|
-  | 两端的字符相等 && 两端中间的字符必须是回文字符串 | s.length >2   |
-  这只是最通俗的形式，要想变成代码，还需要有进一步的考虑，必须转化成数学的形式，方便
-  转化成代码。
-  $$ f(x)=\left\{
-\begin{aligned}
-x & = & \cos(t) \\
-y & = & \sin(t) \\
-z & = & \frac xy
-\end{aligned}
-\right.
-$$
+  我们设 pol(i,j)表示从i到j的字符串是否为回文字符串，那么他可以转化成下面的形式
+  $$ pol(i,j) = pol(i+1,j-1)\wedge(s[i]==s[j]) $$
+  pol(i,j) 要想为真 那么他从i+1 到 j-1 的子字符串必须是回文字符串，s[i]==s[j] 也就是
+  两端必须字符相同的时候。
+  $$ pol(i,j) = pol(i+1,j-1)\wedge(s[i]==s[j]) $$ 所以这就是我们的转移方程式
++ 这里，我们还要考虑边界情况
+  1. 当字符串长度为1的时候，因为只有一个字符，所以他本身就是回文
+  2. 当字符串长度为2的时候，只有两个字符都相等，才表示它是回文
+    \begin{equation}
+    \begin{cases}
+    pol(i,i)=true\\
+    p(i,i+1)=(s_{i}==s_{i+1}) 
+    \end{cases}
+    \end{equation}
++ 整个递推表达式就是
+  \begin{equation}
+  pol(i,j)=\begin{cases}
+  true &\text{i=j}\\
+  s_{i}==s_{i+1} &\text{j-i=1}\\
+  pol(i+1,j-i)\wedge(s[i]==s[j]) &j-i>=2
+  \end{cases}
+  \end{equation}
+
+  
+** 代码实现
+#+begin_src cpp :file "Longest-Palindromic-Substring.cpp"
+  class Solution {
+  public:
+  string longestPalindrome(string s) {}
+  };
+#+end_src
