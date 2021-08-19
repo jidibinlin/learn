@@ -12,7 +12,7 @@
 
 * 阻塞式的程序    
 + 阻塞式客户端
-  #+begin_src csharp
+  #+begin_src csharp :file blockedClient.cs
     using UnityEngine;
     using System.Net.Sockets; // socket编程的名称空间
     using UnityEngine.UI;
@@ -50,7 +50,7 @@
   - 上面的程序中我们看见，程序在接收，发送的过程中，都必须进入等待的状态
   - 其实不止是接受和发送，在连接的时候，如果网速很慢，程序也会卡住，进入阻塞  
 + 阻塞式服务端程序
-  #+begin_src csharp
+  #+begin_src csharp :file blockedServer.cs
     using System;
     using System.Net;
     using System.Net.Sockets;
@@ -121,7 +121,7 @@ socket 的每一个同步API(比如Connect) 对应着两个异步API，分别在
   #+end_src
   在BeginConnect的回调函数中调用EndConnect,可完成连接
 + 异步客户端连接代码
-  #+begin_src csharp
+  #+begin_src csharp :file asyncClientConnect.cs
     using System;
 
     // 点击连接按钮
@@ -169,5 +169,11 @@ socket 的每一个同步API(比如Connect) 对应着两个异步API，分别在
   | callback    | 回调函数，一个AsyncCallback委托                                                            |
   |-------------+--------------------------------------------------------------------------------------------|
   | state       | 一个用户定义对象，其中包含接收操作的相关信息。当操作完成时，此对象会被传递给EndReceive委托 |
-  
-
++ EndReceive函数
+  BeginReceive对应的是EndReceive,他的返回值代表了接收到的字节数
+  #+begin_src csharp :csharp
+    public int EndReceive(
+        IAsyncResult asyncResult
+        )
+  #+end_src
+**** 异步客户端程序代码 
