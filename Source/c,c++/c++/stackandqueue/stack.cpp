@@ -44,7 +44,7 @@ status Push(stack *S,int ins)
 {
 	if((S->top-S->base)>=S->stacksize)
 	{
-		S->base=(int *)realloc(S->base,(S->stacksize+STACK_INCREMENT)*sizeof(int));//reallow the size 
+		S->base=(int *)realloc(S->base,(S->stacksize+STACK_INCREMENT)*sizeof(int));//reallow the size
 		if(!S->base) exit(-1);
 		S->top=S->base+S->stacksize;
 		S->stacksize+=STACK_INCREMENT;
