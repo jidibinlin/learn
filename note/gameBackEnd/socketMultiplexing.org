@@ -50,7 +50,7 @@
   - 上面的程序中我们看见，程序在接收，发送的过程中，都必须进入等待的状态
   - 其实不止是接受和发送，在连接的时候，如果网速很慢，程序也会卡住，进入阻塞  
 + 阻塞式服务端程序
-  #+begin_src csharp
+  #+begin_src csharp :tangle test.cs
     using System;
     using System.Net;
     using System.Net.Sockets;
